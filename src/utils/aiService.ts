@@ -6,6 +6,7 @@ export interface AIStoryResult {
   suggestedPrice: number;
   materials: string[];
   category: string;
+  tags: string[];
 }
 
 const storyTemplates = {
@@ -253,6 +254,7 @@ export async function generateAIStory(
     suggestedPrice,
     materials,
     category,
+    tags: [productName.toLowerCase(), category], // basic tags, can be improved
   };
 }
 

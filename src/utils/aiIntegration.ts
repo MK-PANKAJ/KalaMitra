@@ -7,7 +7,9 @@ import {
   enhanceProductDescription as mockEnhanceDescription
 } from './aiService';
 import { OpenAIService, getAPIKey } from './openaiService';
+import { googleAIService } from './googleAIService';
 import { AIStoryResult } from './aiService';
+import { rateLimiter } from './rateLimiter';
 
 let openaiService: OpenAIService | null = null;
 
@@ -29,31 +31,75 @@ export async function generateAIStory(
   region: string,
   language: 'en' | 'hi'
 ): Promise<AIStoryResult> {
-  // Use OpenAI if API key is available, otherwise fallback to mock
-  if (openaiService) {
+  try {
+    // Check rate limit for story generation
+    await rateLimiter.story.checkLimit('story');
+    
+    console.log('🤖 Using Google AI API for story generation...');
+    
+    // First, analyze the product to extract materials and estimate price
+    const analysisPrompt = `Analyze handicraft product: ${voiceInput} from ${region}.
+Provide JSON response with:
+- materials (array of strings)
+- suggestedPrice (number in rupees)
+- tags (array of strings)`;
+    
+    let materials: string[] = [];
+    let suggestedPrice = 0;
+    let tags: string[] = [];
+    
     try {
-      console.log('🤖 Using OpenAI API for story generation...');
-      return await openaiService.generateStoryAndPrice(voiceInput, region, language);
-    } catch (error) {
-      console.warn('⚠️ OpenAI API failed, falling back to mock service:', error);
+      const analysis = await googleAIService.generateText(analysisPrompt);
+      const parsed = JSON.parse(analysis);
+      materials = parsed.materials || [];
+      suggestedPrice = parsed.suggestedPrice || 0;
+      tags = parsed.tags || [];
+    } catch (analysisError) {
+      console.warn('⚠️ Failed to analyze product details:', analysisError);
+    }
+    
+    // Generate the story
+    const story = await googleAIService.generateProductDescription({
+      name: voiceInput,
+      category: 'handicraft',
+      materials: materials,
+      region: region
+    }, language);
+    
+    return {
+      story,
+      suggestedPrice,
+      category: 'handicraft',
+      materials,
+      tags
+    };
+  } catch (error) {
+    console.warn('⚠️ Google AI API failed, trying OpenAI:', error);
+    
+    if (openaiService) {
+      try {
+        return await openaiService.generateStoryAndPrice(voiceInput, region, language);
+      } catch (error) {
+        console.warn('⚠️ OpenAI API failed too, falling back to mock service:', error);
+      }
     }
   }
 
-  // Mock service as fallback
+  // Mock service as final fallback
   console.log('🔄 Using mock AI service for story generation...');
   return mockGenerateAIStory(voiceInput, region, language);
 }
 
 // NEW: SEO Keywords with OpenAI
 export async function generateSEOKeywords(productName: string, category: string): Promise<string[]> {
-  if (openaiService) {
-    try {
-      // Use OpenAI for better keyword generation
-      const keywords = await mockGenerateSEOKeywords(productName, category);
-      return keywords;
-    } catch (error) {
-      console.warn('OpenAI SEO generation failed:', error);
-    }
+  try {
+    // Generate SEO keywords using generateText API
+    const prompt = `Generate SEO keywords for ${category} product: ${productName}. Return as comma-separated list.`;
+    const response = await googleAIService.generateText(prompt);
+    const keywords = response.split(',').map(k => k.trim());
+    return keywords;
+  } catch (error) {
+    console.warn('⚠️ Google AI SEO generation failed, using mock:', error);
   }
   return mockGenerateSEOKeywords(productName, category);
 }
@@ -69,33 +115,112 @@ export async function analyzeBulkInquiry(inquiry: {
   estimatedDeliveryDays: number;
   complexity: 'low' | 'medium' | 'high';
 }> {
+  try {
+    // Generate analysis using structured prompt
+    const prompt = `Analyze bulk product inquiry:\nProduct: ${inquiry.productType}\nQuantity: ${inquiry.quantity}\nDescription: ${inquiry.description}\n\nProvide a JSON response with:\n- suggestedArtisans (array of strings)\n- estimatedPrice (object with min and max numbers)\n- estimatedDeliveryDays (number)\n- complexity (string: low, medium, or high)`;
+    
+    const response = await googleAIService.generateText(prompt);
+    try {
+      const analysis = JSON.parse(response);
+      return {
+        suggestedArtisans: analysis.suggestedArtisans || [],
+        estimatedPrice: analysis.estimatedPrice || { min: 0, max: 0 },
+        estimatedDeliveryDays: analysis.estimatedDeliveryDays || 0,
+        complexity: analysis.complexity || 'medium'
+      };
+    } catch (parseError) {
+      console.warn('⚠️ Failed to parse AI response:', parseError);
+      throw parseError;
+    }
+  } catch (error) {
+    console.warn('⚠️ Google AI bulk inquiry analysis failed, using mock:', error);
+  }
   return mockAnalyzeBulkInquiry(inquiry);
 }
 
-// NEW: Review Sentiment Analysis with OpenAI
+// Review Sentiment Analysis with Google AI
 export async function analyzeReviewSentiment(review: string): Promise<{
   sentiment: 'positive' | 'neutral' | 'negative';
   score: number;
   keywords: string[];
 }> {
-  return mockAnalyzeReviewSentiment(review);
+  try {
+    // Check rate limit for sentiment analysis
+    await rateLimiter.sentiment.checkLimit('sentiment');
+    
+    const analysis = await googleAIService.analyzeContent(review);
+    
+    // Generate a confidence score from sentiment analysis
+    const scorePrompt = `Rate the following review's sentiment strength from 0 to 1:\n${review}`;
+    let score = 0.5; // Default neutral score
+    
+    try {
+      const scoreResponse = await googleAIService.generateText(scorePrompt);
+      const parsedScore = parseFloat(scoreResponse);
+      if (!isNaN(parsedScore) && parsedScore >= 0 && parsedScore <= 1) {
+        score = parsedScore;
+      }
+    } catch (scoreError) {
+      console.warn('⚠️ Failed to generate sentiment score:', scoreError);
+    }
+    
+    return {
+      sentiment: analysis.sentiment,
+      score,
+      keywords: analysis.topics
+    };
+  } catch (error) {
+    console.warn('⚠️ Google AI sentiment analysis failed, using mock:', error);
+    return mockAnalyzeReviewSentiment(review);
+  }
 }
 
-// NEW: Content Moderation with OpenAI
+// Content Moderation with Google AI
 export async function moderateContent(content: string): Promise<{
   isAppropriate: boolean;
   flags: string[];
   confidence: number;
 }> {
-  return mockModerateContent(content);
+  try {
+    // Check rate limit for content moderation
+    await rateLimiter.moderation.checkLimit('moderation');
+    
+    return await googleAIService.moderateReview(content);
+  } catch (error) {
+    console.warn('⚠️ Google AI moderation failed, trying OpenAI:', error);
+    
+    if (openaiService) {
+      try {
+        const prompt = 'Analyze this content for moderation: ' + content + ' ' +
+                   'Provide a JSON response with: ' +
+                   'isAppropriate (boolean), flags (array of strings for issues found), confidence (number from 0 to 1)';
+        const moderationResponse = await openaiService.chatCompletion(prompt);
+        const response = JSON.parse(moderationResponse);
+        return response;
+      } catch (openaiError) {
+        console.warn('⚠️ OpenAI moderation failed, falling back to mock:', openaiError);
+      }
+    }
+    
+    return mockModerateContent(content);
+  }
 }
 
-// NEW: Enhanced Description with OpenAI
+// Enhanced Description with Google AI
 export async function enhanceProductDescription(
   description: string,
   language: 'en' | 'hi'
 ): Promise<string> {
-  return mockEnhanceDescription(description, language);
+  try {
+    // Check rate limit for description generation
+    await rateLimiter.description.checkLimit('description');
+    
+    const prompt = `Enhance the following product description for ${language === 'hi' ? 'Hindi' : 'English'} language:\n\n${description}`;
+    return await googleAIService.generateText(prompt);
+  } catch (error) {
+    console.warn('⚠️ Google AI description enhancement failed, using mock:', error);
+    return mockEnhanceDescription(description, language);
+  }
 }
 
 export { initializeOpenAI };
