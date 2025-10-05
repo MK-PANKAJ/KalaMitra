@@ -136,7 +136,7 @@ export const CoordinatorDashboard: React.FC = () => {
                 <div><strong>Order:</strong> {selectedDispute.order.product.name}</div>
                 <div><strong>Raised by:</strong> {selectedDispute.raisedBy} ({selectedDispute.raisedByRole})</div>
                 <div><strong>Reason:</strong> {selectedDispute.reason}</div>
-                <div><strong>Date:</strong> {new Date(selectedDispute.createdAt).toLocaleDateString('en-IN')}</div>
+                <div><strong>Date:</strong> {selectedDispute.createdAt ? new Date(selectedDispute.createdAt).toLocaleDateString('en-IN') : 'N/A'}</div>
               </div>
             </div>
 
@@ -145,7 +145,7 @@ export const CoordinatorDashboard: React.FC = () => {
               <p className="text-gray-700">{selectedDispute.description}</p>
             </div>
 
-            {selectedDispute.photos.length > 0 && (
+            {selectedDispute.photos && selectedDispute.photos.length > 0 && (
               <div>
                 <h3 className="font-semibold text-gray-800 mb-2">Evidence Photos</h3>
                 <div className="grid grid-cols-3 gap-3">
@@ -161,7 +161,7 @@ export const CoordinatorDashboard: React.FC = () => {
               <div className="bg-gray-50 rounded-lg p-4">
                 <div className="flex gap-4">
                   <img
-                    src={selectedDispute.order.product.photos[0]}
+                    src={selectedDispute.order.product.photos?.[0] || selectedDispute.order.product.images?.[0] || ''}
                     alt=""
                     className="w-24 h-24 object-cover rounded"
                   />

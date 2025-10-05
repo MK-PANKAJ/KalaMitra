@@ -111,7 +111,7 @@ export class EnhancedAnalyticsService {
     const productScores = products.map(product => {
       // Calculate score based on multiple factors
       const orderCount = orders.filter(o => 
-        o.items.some(item => item.productId === product.id)
+        (o.items || []).some(item => item.productId === product.id)
       ).length;
       
       const reviewCount = reviews.filter(r => r.productId === product.id).length;
@@ -122,7 +122,7 @@ export class EnhancedAnalyticsService {
         : 0;
       
       // Recency factor (newer products get boost)
-      const daysSinceCreation = (Date.now() - new Date(product.createdAt).getTime()) / (1000 * 60 * 60 * 24);
+  const daysSinceCreation = (Date.now() - new Date(product.createdAt || Date.now().toString()).getTime()) / (1000 * 60 * 60 * 24);
       const recencyBoost = Math.max(0, 30 - daysSinceCreation) / 30;
       
       // Calculate trending score
@@ -142,7 +142,7 @@ export class EnhancedAnalyticsService {
     const salesMap = new Map<string, number>();
 
     orders.filter(o => o.status === 'completed').forEach(order => {
-      order.items.forEach(item => {
+      (order.items || []).forEach(item => {
         salesMap.set(item.productId, (salesMap.get(item.productId) || 0) + item.quantity);
       });
     });
@@ -162,10 +162,11 @@ export class EnhancedAnalyticsService {
     let totalRevenue = 0;
 
     orders.filter(o => o.status === 'completed').forEach(order => {
-      order.items.forEach(item => {
+      (order.items || []).forEach(item => {
         const product = products.find(p => p.id === item.productId);
         if (product) {
-          const revenue = item.price * item.quantity;
+          const price = item.price || 0;
+          const revenue = price * item.quantity;
           categoryRevenue.set(
             product.category,
             (categoryRevenue.get(product.category) || 0) + revenue
@@ -234,7 +235,7 @@ export class EnhancedAnalyticsService {
     const sevenDaysAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
 
     const newUsers = users.filter(u => 
-      new Date(u.createdAt).getTime() > thirtyDaysAgo
+      !!u.createdAt && new Date(u.createdAt).getTime() > thirtyDaysAgo
     ).length;
 
     const activeUsers = users.filter(u => {

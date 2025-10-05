@@ -16,6 +16,7 @@ export interface User {
   id: string;
   name: string;
   role: UserRole;
+  createdAt?: string;
   language: 'en' | 'hi';
   region?: string;
   rating?: number;
@@ -73,6 +74,12 @@ export interface Product {
   hasQualityBadge: boolean;
   createdAt: string;
   isActive: boolean;
+  // Backwards-compatible / optional fields referenced in UI
+  images?: string[];
+  craftSpecialty?: string[];
+  bio?: string;
+  yearsOfExperience?: number;
+  status?: 'active' | 'inactive' | 'draft' | 'archived';
   // Commission Agreement
   platformCommission?: {
     percentage: number; // e.g., 10 for 10%
@@ -102,7 +109,9 @@ export interface Order {
   totalPrice: number;
   status: OrderStatus;
   milestones: OrderMilestone[];
-  paymentReleased: boolean;
+  // make optional so temporary/demo objects don't fail type checks
+  paymentReleased?: boolean;
+  items?: { productId: string; quantity: number; price?: number }[];
   createdAt: string;
   deliveryAddress: string;
 }
@@ -120,6 +129,7 @@ export interface Dispute {
   resolution?: string;
   resolvedBy?: string;
   resolvedAt?: string;
+  createdAt?: string;
 }
 
 export interface Review {
@@ -127,6 +137,7 @@ export interface Review {
   productId: string;
   buyerId: string;
   buyerName: string;
+  orderId?: string;
   rating: number;
   title: string;
   comment: string;
@@ -213,6 +224,7 @@ export interface Quotation {
 export interface Message {
   id: string;
   conversationId: string;
+  senderId?: string;
   senderName: string;
   senderRole: UserRole;
   receiverId: string;
@@ -233,6 +245,7 @@ export interface Conversation {
 
 export interface AppState {
   user: User | null;
+  users?: User[];
   products: Product[];
   orders: Order[];
   disputes: Dispute[];

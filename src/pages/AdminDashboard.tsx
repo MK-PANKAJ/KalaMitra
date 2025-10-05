@@ -1644,8 +1644,7 @@ export const AdminDashboard: React.FC = () => {
                     }
                     couponService.createCoupon({
                       ...newCoupon,
-                      status: 'active',
-                      usedCount: 0
+                      status: 'active'
                     });
                     alert(`✅ Coupon ${newCoupon.code} created successfully!`);
                     setShowAddCoupon(false);

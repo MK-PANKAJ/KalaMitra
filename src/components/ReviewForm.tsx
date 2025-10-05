@@ -39,6 +39,7 @@ export const ReviewForm: React.FC<ReviewFormProps> = ({ order, onSubmit, onCance
       orderId: order.id,
       buyerId: order.buyerId,
       buyerName: order.buyerName,
+      title: comment.trim().split('\n')[0].slice(0, 60) || 'Review',
       rating,
       comment: comment.trim(),
       photos: photos.length > 0 ? photos : undefined,

@@ -16,8 +16,10 @@ export class VoiceService {
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (SpeechRecognition) {
       this.recognition = new SpeechRecognition();
-      this.recognition.continuous = false;
-      this.recognition.interimResults = true;
+      if (this.recognition) {
+        this.recognition.continuous = false;
+        this.recognition.interimResults = true;
+      }
     }
   }
 
