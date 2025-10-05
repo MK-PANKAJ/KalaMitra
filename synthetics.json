@@ -1,0 +1,20 @@
+{
+  "tests": [
+    {
+      "public_id": "*",
+      "locations": ["aws:ap-south-1"],
+      "options": {
+        "retry": {
+          "count": 2,
+          "interval": 300
+        },
+        "allowInsecureCertificates": false,
+        "tick_every": 900
+      }
+    }
+  ],
+  "configPath": "./synthetics.json",
+  "global": {
+    "locationIds": ["aws:ap-south-1"]
+  }
+}
