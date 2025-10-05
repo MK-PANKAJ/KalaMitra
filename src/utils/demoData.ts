@@ -1,0 +1,151 @@
+import { Product, Order, Dispute, OrderMilestone } from '../types';
+
+export function generateDemoData() {
+  const demoProducts: Product[] = [
+    {
+      id: 'prod-1',
+      artisanId: 'artisan-1',
+      artisanName: 'Rajesh Kumar',
+      name: 'Handcrafted Blue Pottery Vase',
+      description: 'Beautiful blue pottery vase with traditional Jaipur designs',
+      story: 'Crafted with love and dedication in Jaipur, this exquisite vase showcases the timeless traditions passed down through generations. Each intricate detail tells the story of skilled artisans who have perfected their craft over years of practice.',
+      category: 'pottery',
+      region: 'Jaipur, Rajasthan',
+      photos: ['https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?w=400', 'https://images.unsplash.com/photo-1610701596007-11502861dcfa?w=400'],
+      price: 2500,
+      suggestedPrice: 2500,
+      materials: ['Clay', 'Natural pigments', 'Glaze'],
+      dimensions: '12" x 8"',
+      qualityCheck: {
+        materialQuality: true,
+        craftmanship: true,
+        dimensions: true,
+        finishing: true,
+        packaging: true,
+        photos: ['https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?w=400'],
+        checkedBy: 'QC Team',
+        checkedAt: new Date().toISOString(),
+      },
+      hasQualityBadge: true,
+      createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+      isActive: true,
+    },
+    {
+      id: 'prod-2',
+      artisanId: 'artisan-2',
+      artisanName: 'Priya Sharma',
+      name: 'Handwoven Silk Dupatta',
+      description: 'Elegant silk dupatta with traditional Banarasi weaving',
+      story: 'Born from the rich cultural heritage of Varanasi, this beautiful dupatta represents the essence of Indian craftsmanship. Made using traditional techniques, it embodies the spirit and soul of our artisan community.',
+      category: 'textile',
+      region: 'Varanasi, Uttar Pradesh',
+      photos: ['https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=400', 'https://images.unsplash.com/photo-1590736969955-71cc94901144?w=400'],
+      price: 3500,
+      suggestedPrice: 3500,
+      materials: ['Pure Silk', 'Gold thread', 'Natural dyes'],
+      dimensions: '2.5m x 1m',
+      qualityCheck: {
+        materialQuality: true,
+        craftmanship: true,
+        dimensions: true,
+        finishing: true,
+        packaging: true,
+        photos: ['https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=400'],
+        checkedBy: 'QC Team',
+        checkedAt: new Date().toISOString(),
+      },
+      hasQualityBadge: true,
+      createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+      isActive: true,
+    },
+    {
+      id: 'prod-3',
+      artisanId: 'artisan-3',
+      artisanName: 'Mohammed Iqbal',
+      name: 'Brass Wall Hanging',
+      description: 'Intricate brass wall art with Islamic geometric patterns',
+      story: 'This stunning wall hanging from Moradabad is a testament to the incredible skill and patience of our master craftspeople. Every curve and pattern has been carefully created using age-old methods that preserve our cultural legacy.',
+      category: 'metalwork',
+      region: 'Moradabad, Uttar Pradesh',
+      photos: ['https://images.unsplash.com/photo-1582582621959-48d27397dc69?w=400'],
+      price: 1800,
+      suggestedPrice: 1800,
+      materials: ['Brass', 'Copper accents'],
+      dimensions: '18" x 12"',
+      hasQualityBadge: false,
+      createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+      isActive: true,
+    },
+  ];
+
+  const milestones1: OrderMilestone[] = [
+    { status: 'pending', timestamp: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(), note: 'Order placed' },
+    { status: 'accepted', timestamp: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(), note: 'Artisan accepted order' },
+    { status: 'in_progress', timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), note: 'Work in progress' },
+  ];
+
+  const milestones2: OrderMilestone[] = [
+    { status: 'pending', timestamp: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(), note: 'Order placed' },
+    { status: 'accepted', timestamp: new Date(Date.now() - 9 * 24 * 60 * 60 * 1000).toISOString(), note: 'Artisan accepted order' },
+    { status: 'in_progress', timestamp: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(), note: 'Work in progress' },
+    { status: 'quality_check', timestamp: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(), note: 'Quality verification completed' },
+    { status: 'shipped', timestamp: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(), note: 'Shipped via courier' },
+    { status: 'delivered', timestamp: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), note: 'Delivered to buyer' },
+  ];
+
+  const demoOrders: Order[] = [
+    {
+      id: 'order-1',
+      productId: 'prod-1',
+      product: demoProducts[0],
+      buyerId: 'buyer-1',
+      buyerName: 'Anjali Mehta',
+      artisanId: 'artisan-1',
+      artisanName: 'Rajesh Kumar',
+      quantity: 1,
+      totalPrice: 2500,
+      status: 'in_progress',
+      milestones: milestones1,
+      paymentReleased: false,
+      createdAt: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),
+      deliveryAddress: '123 MG Road, Bangalore, Karnataka',
+    },
+    {
+      id: 'order-2',
+      productId: 'prod-2',
+      product: demoProducts[1],
+      buyerId: 'buyer-2',
+      buyerName: 'Vikram Singh',
+      artisanId: 'artisan-2',
+      artisanName: 'Priya Sharma',
+      quantity: 2,
+      totalPrice: 7000,
+      status: 'delivered',
+      milestones: milestones2,
+      paymentReleased: false,
+      createdAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
+      deliveryAddress: '456 Park Street, Kolkata, West Bengal',
+    },
+  ];
+
+  const demoDisputes: Dispute[] = [
+    {
+      id: 'dispute-1',
+      orderId: 'order-2',
+      order: demoOrders[1],
+      raisedBy: 'buyer-2',
+      raisedByRole: 'buyer',
+      reason: 'quality_issue',
+      description: 'The dupatta has some loose threads and the color is slightly different from the photo',
+      photos: ['https://images.unsplash.com/photo-1590736969955-71cc94901144?w=400'],
+      status: 'under_review',
+      createdAt: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(),
+    },
+  ];
+
+  return {
+    products: demoProducts,
+    orders: demoOrders,
+    disputes: demoDisputes,
+  };
+}

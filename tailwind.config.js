@@ -1,0 +1,66 @@
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
+  theme: {
+    extend: {
+      colors: {
+        saffron: {
+          50: '#FFF8E1',
+          100: '#FFECB3',
+          200: '#FFE082',
+          300: '#FFD54F',
+          400: '#FFCA28',
+          500: '#FFC107',
+          600: '#FFB300',
+          700: '#FFA000',
+          800: '#FF8F00',
+          900: '#FF6F00',
+        },
+        deepblue: {
+          50: '#E3F2FD',
+          100: '#BBDEFB',
+          200: '#90CAF9',
+          300: '#64B5F6',
+          400: '#42A5F5',
+          500: '#2196F3',
+          600: '#1E88E5',
+          700: '#1976D2',
+          800: '#1565C0',
+          900: '#0D47A1',
+        },
+        terracotta: {
+          50: '#FBE9E7',
+          100: '#FFCCBC',
+          200: '#FFAB91',
+          300: '#FF8A65',
+          400: '#FF7043',
+          500: '#FF5722',
+          600: '#F4511E',
+          700: '#E64A19',
+          800: '#D84315',
+          900: '#BF360C',
+        },
+        gold: {
+          50: '#FFF9E6',
+          100: '#FFF3CC',
+          200: '#FFE699',
+          300: '#FFD966',
+          400: '#FFCC33',
+          500: '#FFBF00',
+          600: '#CC9900',
+          700: '#997300',
+          800: '#664D00',
+          900: '#332600',
+        },
+      },
+      fontFamily: {
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        hindi: ['Noto Sans Devanagari', 'system-ui', 'sans-serif'],
+      },
+    },
+  },
+  plugins: [],
+}
