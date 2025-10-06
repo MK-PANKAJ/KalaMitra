@@ -242,7 +242,7 @@ export const LoginPage: React.FC = () => {
                             : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                         }`}
                       >
-                        {r === 'artisan' ? '🎨 Artisan' : r === 'buyer' ? '🛍️ Buyer' : '⚖️ Coordinator'}
+                        {r === 'artisan' ? '🎨 Artisan' : '🛍️ Buyer'}
                       </button>
                     ))}
                   </div>
