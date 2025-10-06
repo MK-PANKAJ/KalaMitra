@@ -7,6 +7,7 @@ export const initialState: AppState = {
   orders: [],
   disputes: [],
   governmentSchemes: [],
+  courses: [],
   reviews: [],
   messages: [],
   conversations: [],
@@ -42,7 +43,7 @@ export const appReducer = (state: AppState, action: AppAction): AppState => {
         products: [],
         orders: [],
         disputes: [],
-        governmentSchemes: [],
+        courses: [],
         reviews: [],
         messages: [],
         conversations: [],
@@ -90,6 +91,26 @@ export const appReducer = (state: AppState, action: AppAction): AppState => {
             ? { ...o, milestones: [...o.milestones, action.payload.milestone] }
             : o
         ),
+      };
+
+    case 'ADD_COURSE':
+      return {
+        ...state,
+        courses: [...state.courses, action.payload],
+      };
+
+    case 'UPDATE_COURSE':
+      return {
+        ...state,
+        courses: state.courses.map(course =>
+          course.id === action.payload.id ? { ...course, ...action.payload.updates } : course
+        ),
+      };
+
+    case 'DELETE_COURSE':
+      return {
+        ...state,
+        courses: state.courses.filter(course => course.id !== action.payload),
       };
 
     case 'ADD_GOVERNMENT_SCHEME':
@@ -185,7 +206,7 @@ export const appReducer = (state: AppState, action: AppAction): AppState => {
         products: demoData.products,
         orders: demoData.orders,
         disputes: demoData.disputes,
-        governmentSchemes: demoData.governmentSchemes || [],
+        courses: demoData.courses || [],
         reviews: demoData.reviews || [],
       };
 

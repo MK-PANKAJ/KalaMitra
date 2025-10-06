@@ -226,6 +226,23 @@ export interface Conversation {
   updatedAt: string;
 }
 
+export interface Course {
+  id: string;
+  title: string;
+  description: string;
+  instructor: string;
+  craftType: string;
+  level: 'beginner' | 'intermediate' | 'advanced';
+  duration: number;
+  lessons: number;
+  thumbnail: string;
+  youtubeLink?: string;
+  status: 'active' | 'draft' | 'archived';
+  enrolledCount?: number;
+  rating?: number;
+  createdAt?: string;
+}
+
 export interface AppState {
   user: User | null;
   users?: User[];
@@ -234,6 +251,7 @@ export interface AppState {
   disputes: Dispute[];
   governmentSchemes: GovernmentScheme[];
   reviews: Review[];
+  courses: Course[];
   messages: Message[];
   conversations: Conversation[];
   isListening: boolean;
@@ -257,7 +275,7 @@ export type AppAction =
   | { type: 'ADD_GOVERNMENT_SCHEME'; payload: GovernmentScheme }
   | { type: 'UPDATE_GOVERNMENT_SCHEME'; payload: { id: string; updates: Partial<GovernmentScheme> } }
   | { type: 'DELETE_GOVERNMENT_SCHEME'; payload: string }
-  | { type: 'ADD_REVIEW'; payload: Review }
+
   | { type: 'ADD_TO_WISHLIST'; payload: string }
   | { type: 'REMOVE_FROM_WISHLIST'; payload: string }
   | { type: 'ADD_MESSAGE'; payload: Message }

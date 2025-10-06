@@ -1,4 +1,4 @@
-import { Product, Order, Dispute, OrderMilestone, GovernmentScheme } from '../types';
+import { Product, Order, Dispute, OrderMilestone, GovernmentScheme, Course } from '../types';
 
 export function generateDemoData() {
   const demoProducts: Product[] = [
@@ -192,11 +192,47 @@ export function generateDemoData() {
     },
   ];
 
+  const demoCourses: Course[] = [
+    {
+      id: 'course-1',
+      title: 'Introduction to Blue Pottery',
+      description: 'Learn the ancient art of Jaipur Blue Pottery from scratch. Master basic techniques and create your first masterpiece.',
+      instructor: 'Master Rajesh Kumar',
+      craftType: 'Pottery',
+      level: 'beginner',
+      duration: 120,
+      lessons: 8,
+      thumbnail: 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?w=400',
+      status: 'active',
+      enrolledCount: 234,
+      rating: 4.8,
+      youtubeLink: 'https://youtube.com/watch?v=blue-pottery-intro',
+      createdAt: new Date().toISOString(),
+    },
+    {
+      id: 'course-2',
+      title: 'Advanced Textile Weaving',
+      description: 'Master complex weaving patterns and traditional designs used in Banarasi sarees.',
+      instructor: 'Guru Meera Devi',
+      craftType: 'Textile',
+      level: 'advanced',
+      duration: 180,
+      lessons: 12,
+      thumbnail: 'https://images.unsplash.com/photo-1610832958506-aa56368176cf?w=400',
+      status: 'active',
+      enrolledCount: 156,
+      rating: 4.9,
+      youtubeLink: 'https://youtube.com/watch?v=textile-weaving-advanced',
+      createdAt: new Date().toISOString(),
+    },
+  ];
+
   return {
     products: demoProducts,
     orders: demoOrders,
     disputes: demoDisputes,
     governmentSchemes: demoGovernmentSchemes,
+    courses: demoCourses,
     reviews: [],
   };
 }
