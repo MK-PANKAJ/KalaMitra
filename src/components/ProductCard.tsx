@@ -12,6 +12,7 @@ interface ProductCardProps {
 
 export const ProductCard: React.FC<ProductCardProps> = ({ product, onClick, showActions = false }) => {
   const { state, dispatch } = useApp();
+  const isCoordinator = state.user?.role === 'coordinator';
 
   const handleMessageArtisan = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent card click
