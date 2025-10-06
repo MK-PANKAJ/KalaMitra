@@ -158,7 +158,7 @@ export const ArtisanProfilePage: React.FC<ArtisanProfilePageProps> = ({
           </div>
         )}
 
-        {onMessageArtisan && state.user?.role === 'buyer' && (
+        {onMessageArtisan && (state.user?.role === 'coordinator' || state.user?.role === 'artisan' || state.user?.role === 'admin') && (
           <button
             onClick={onMessageArtisan}
             className="mt-4 px-6 py-3 bg-terracotta-500 text-white rounded-lg hover:bg-terracotta-600 transition-colors font-semibold flex items-center gap-2"
