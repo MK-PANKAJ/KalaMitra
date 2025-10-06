@@ -143,6 +143,7 @@ Make the story authentic to Indian artisanal traditions and the specified region
         suggestedPrice: parsed.suggestedPrice || 1000,
         materials: Array.isArray(parsed.materials) ? parsed.materials : ['Traditional materials'],
         category: parsed.category || 'general',
+        tags: Array.isArray(parsed.tags) ? parsed.tags : ['handcrafted', 'traditional'],
       };
     } catch (error) {
       console.error('Failed to parse AI response:', error);
@@ -152,6 +153,7 @@ Make the story authentic to Indian artisanal traditions and the specified region
         suggestedPrice: 1500,
         materials: ['Traditional materials'],
         category: 'general',
+        tags: ['handcrafted', 'traditional'],
       };
     }
   }

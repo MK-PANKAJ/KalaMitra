@@ -3,6 +3,10 @@ import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
+  server: {
+    port: 3000,
+    host: true
+  },
   define: {
     'import.meta.env.GOOGLE_AI_API_KEY': JSON.stringify('AIzaSyBWu4WRfw5IV-CI8f-7DSz7rOBkSPKlLkI')
   },
