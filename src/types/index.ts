@@ -283,6 +283,10 @@ export type AppAction =
   | { type: 'REMOVE_FROM_WISHLIST'; payload: string }
   | { type: 'ADD_MESSAGE'; payload: Message }
   | { type: 'ADD_CONVERSATION'; payload: Conversation }
+  | { type: 'ADD_USER'; payload: User }
+  | { type: 'UPDATE_USER_PROFILE'; payload: { id: string; updates: Partial<User> } }
+  | { type: 'DELETE_USER'; payload: string }
+  | { type: 'SET_USERS'; payload: User[] }
   | { type: 'UPDATE_USER'; payload: Partial<User> }
   | { type: 'SET_LISTENING'; payload: boolean }
   | { type: 'SET_SPEAKING'; payload: boolean }

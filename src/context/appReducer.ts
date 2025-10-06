@@ -3,6 +3,7 @@ import { generateDemoData } from '../utils/demoData';
 
 export const initialState: AppState = {
   user: null,
+  users: [],
   products: [],
   orders: [],
   disputes: [],
@@ -197,6 +198,40 @@ export const appReducer = (state: AppState, action: AppAction): AppState => {
       return {
         ...state,
         isSpeaking: action.payload,
+      };
+
+    case 'ADD_USER':
+      return {
+        ...state,
+        users: [...(state.users || []), action.payload],
+      };
+
+    case 'UPDATE_USER_PROFILE':
+      return {
+        ...state,
+        users: state.users?.map(user => 
+          user.id === action.payload.id 
+            ? { ...user, ...action.payload.updates }
+            : user
+        ) || [],
+      };
+
+    case 'DELETE_USER':
+      return {
+        ...state,
+        users: state.users?.filter(user => user.id !== action.payload) || [],
+      };
+
+    case 'SET_USERS':
+      return {
+        ...state,
+        users: action.payload,
+      };
+
+    case 'UPDATE_USER':
+      return {
+        ...state,
+        user: state.user ? { ...state.user, ...action.payload } : null,
       };
 
     case 'LOAD_DEMO_DATA':

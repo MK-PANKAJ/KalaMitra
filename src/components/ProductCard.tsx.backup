@@ -69,7 +69,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onClick, show
         <h3 className="font-bold text-lg text-deepblue-800 mb-1 line-clamp-1">
           {product.name}
         </h3>
-
+        
         <div className="flex items-center gap-1 text-sm text-gray-600 mb-2">
           <User size={14} />
           <span>{product.artisanName}</span>
@@ -90,18 +90,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onClick, show
             <span>{product.price.toLocaleString('en-IN')}</span>
           </div>
           {showActions && (
-            <div className="flex gap-2">
-              <button className="px-4 py-2 bg-terracotta-500 text-white rounded-lg hover:bg-terracotta-600 transition-colors text-sm font-semibold">
-                View Details
-              </button>
-              <button
-                onClick={handleMessageArtisan}
-                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm font-semibold flex items-center gap-1"
-              >
-                <MessageCircle size={16} />
-                Message
-              </button>
-            </div>
+            <div className="px-4 py-2 bg-terracotta-500 text-white rounded-lg hover:bg-terracotta-600 transition-colors text-sm font-semibold">
+              View Details
+            </button>
           )}
         </div>
 
