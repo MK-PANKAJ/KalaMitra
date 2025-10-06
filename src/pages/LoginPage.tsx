@@ -84,7 +84,6 @@ export const LoginPage: React.FC = () => {
   const demoUsers = [
     { name: 'Rajesh Kumar', email: 'rajesh@kalamitra.com', password: 'artisan123', role: 'artisan' as UserRole },
     { name: 'Anjali Mehta', email: 'anjali@kalamitra.com', password: 'buyer123', role: 'buyer' as UserRole },
-    { name: 'QC Coordinator', email: 'coordinator@kalamitra.com', password: 'coordinator123', role: 'coordinator' as UserRole },
     { name: 'Super Admin', email: 'admin@kalamitra.com', password: 'admin123', role: 'admin' as UserRole },
   ];
 
@@ -231,7 +230,7 @@ export const LoginPage: React.FC = () => {
                     I am a...
                   </label>
                   <div className="grid grid-cols-3 gap-2">
-                    {(['artisan', 'buyer', 'coordinator'] as UserRole[]).map((r) => (
+                    {(['artisan', 'buyer'] as UserRole[]).map((r) => (
                       <button
                         key={r}
                         type="button"

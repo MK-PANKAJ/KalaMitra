@@ -104,6 +104,11 @@ class BackendService {
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 500));
 
+    // Prevent coordinator self-registration - only admins can create coordinator accounts
+    if (role === 'coordinator') {
+      throw new Error('Coordinator accounts can only be created by administrators');
+    }
+
     // Check if email already exists
     if (this.db.users.some(u => u.email.toLowerCase() === email.toLowerCase())) {
       throw new Error('Email already exists');
@@ -123,6 +128,38 @@ class BackendService {
     this.saveToStorage();
 
     const { password: _, ...userWithoutPassword } = newUser;
+    return userWithoutPassword;
+  }
+
+  // Admin-only method to create coordinator accounts
+  async createCoordinator(
+    name: string,
+    email: string,
+    password: string,
+    region?: string
+  ): Promise<User | null> {
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    // Check if email already exists
+    if (this.db.users.some(u => u.email.toLowerCase() === email.toLowerCase())) {
+      throw new Error('Email already exists');
+    }
+
+    const newCoordinator: User & { email: string; password: string } = {
+      id: `user-${Date.now()}`,
+      name,
+      email,
+      password, // In production, this would be hashed
+      role: 'coordinator',
+      language: 'en',
+      region: region || 'India',
+    };
+
+    this.db.users.push(newCoordinator);
+    this.saveToStorage();
+
+    const { password: _, ...userWithoutPassword } = newCoordinator;
     return userWithoutPassword;
   }
 
