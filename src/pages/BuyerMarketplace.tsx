@@ -1,12 +1,6 @@
 import React, { useState } from 'react';
 import { Search, Filter, MapPin, Award, ShoppingBag, CreditCard, Heart, MessageCircle, Star, Flag, X, AlertTriangle, Gift } from 'lucide-react';
 import { useApp } from '../context/AppContext';
-import { OrderCard } from '../components/OrderCard';
-import { ReviewCard } from '../components/ReviewCard';
-import { ReviewForm } from '../components/ReviewForm';
-import { StarRating } from '../components/StarRating';
-import { Product, Order, OrderMilestone, Review } from '../types';
-import { couponService } from '../utils/couponService';
 
 export const BuyerMarketplace: React.FC = () => {
   const { state, dispatch } = useApp();
@@ -21,14 +15,6 @@ export const BuyerMarketplace: React.FC = () => {
   const [couponCode, setCouponCode] = useState('');
   const [appliedCoupon, setAppliedCoupon] = useState<any>(null);
   const [couponValidation, setCouponValidation] = useState<any>(null);
-  
-  // Report & Review states
-  const [showReportModal, setShowReportModal] = useState(false);
-  const [showProductReviewForm, setShowProductReviewForm] = useState(false);
-  const [reportReason, setReportReason] = useState('');
-  const [reportDetails, setReportDetails] = useState('');
-  const [reportCategory, setReportCategory] = useState<'misleading' | 'inappropriate' | 'quality' | 'fake' | 'other'>('misleading');
-
   const buyerOrders = state.orders.filter(o => o.buyerId === state.user?.id);
   const wishlistProducts = state.products.filter(p => state.user?.wishlist?.includes(p.id));
   const productReviews = selectedProduct ? state.reviews.filter(r => r.productId === selectedProduct.id) : [];

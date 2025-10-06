@@ -1,20 +1,8 @@
+import { GovernmentScheme } from '../types';
 import React, { useState } from 'react';
 import { Shield, Users, Package, FileText, Plus, Edit, Trash2, Building2, BarChart3, Settings, BookOpen, Award, Tag, AlertCircle, Gift } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { couponService } from '../utils/couponService';
-
-interface GovernmentScheme {
-  id: string;
-  name: string;
-  ministry: string;
-  description: string;
-  benefits: string[];
-  eligibility: string[];
-  applicationLink: string;
-  deadline?: string;
-  category: 'finance' | 'training' | 'marketing' | 'export';
-  status: 'active' | 'upcoming' | 'closed';
-}
 
 interface Course {
   id: string;
@@ -123,13 +111,13 @@ export const AdminDashboard: React.FC = () => {
 
   const stats = {
     totalUsers: users.length,
-    artisans: users.filter(u => u.role === 'artisan').length,
-    buyers: users.filter(u => u.role === 'buyer').length,
-    coordinators: users.filter(u => u.role === 'coordinator').length,
-    totalProducts: state.products.length,
-    pendingQC: state.products.filter(p => !p.hasQualityBadge).length,
-    totalOrders: state.orders.length,
-    completedOrders: state.orders.filter(o => o.status === 'completed').length,
+        artisans: users.filter((u: any) => u.role === 'artisan').length,
+        buyers: users.filter((u: any) => u.role === 'buyer').length,
+        coordinators: users.filter((u: any) => u.role === 'coordinator').length,
+        totalProducts: state.products.length,
+        pendingQC: state.products.filter((p: any) => !p.hasQualityBadge).length,
+        totalOrders: state.orders.length,
+        completedOrders: state.orders.filter((o: any) => o.status === 'completed').length,
   };
 
   const handleAddBenefit = () => {
@@ -347,10 +335,10 @@ export const AdminDashboard: React.FC = () => {
     const reports = {
       salesReport: {
         totalOrders: state.orders.length,
-        completedOrders: state.orders.filter(o => o.status === 'completed').length,
+        completedOrders: state.orders.filter((o: any) => o.status === 'completed').length,
         totalRevenue: state.orders.filter(o => o.status === 'completed').reduce((sum, o) => sum + o.totalPrice, 0),
         averageOrderValue: state.orders.length > 0 
-          ? state.orders.filter(o => o.status === 'completed').reduce((sum, o) => sum + o.totalPrice, 0) / state.orders.filter(o => o.status === 'completed').length 
+          ? state.orders.filter((o: any) => o.status === 'completed').reduce((sum: number, o: any) => sum + o.totalPrice, 0) / state.orders.filter((o: any) => o.status === 'completed').length 
           : 0,
       },
       userReport: {
@@ -361,9 +349,9 @@ export const AdminDashboard: React.FC = () => {
       },
       productReport: {
         totalProducts: state.products.length,
-        activeProducts: state.products.filter(p => p.isActive).length,
-        qcVerified: state.products.filter(p => p.hasQualityBadge).length,
-        pendingQC: state.products.filter(p => !p.hasQualityBadge && !p.isActive).length,
+        activeProducts: state.products.filter((p: any) => p.isActive).length,
+        qcVerified: state.products.filter((p: any) => p.hasQualityBadge).length,
+        pendingQC: state.products.filter((p: any) => !p.hasQualityBadge && !p.isActive).length,
       },
     };
 

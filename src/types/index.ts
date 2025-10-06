@@ -253,6 +253,7 @@ export type AppAction =
   | { type: 'UPDATE_ORDER'; payload: { id: string; updates: Partial<Order> } }
   | { type: 'ADD_MILESTONE'; payload: { orderId: string; milestone: OrderMilestone } }
   | { type: 'ADD_DISPUTE'; payload: Dispute }
+  | { type: 'UPDATE_DISPUTE'; payload: { id: string; updates: Partial<Dispute> } }
   | { type: 'ADD_GOVERNMENT_SCHEME'; payload: GovernmentScheme }
   | { type: 'UPDATE_GOVERNMENT_SCHEME'; payload: { id: string; updates: Partial<GovernmentScheme> } }
   | { type: 'DELETE_GOVERNMENT_SCHEME'; payload: string }

@@ -140,10 +140,18 @@ export const appReducer = (state: AppState, action: AppAction): AppState => {
           : null,
       };
 
-    case 'ADD_MESSAGE':
+    case 'ADD_DISPUTE':
       return {
         ...state,
-        messages: [...state.messages, action.payload],
+        disputes: [...state.disputes, action.payload],
+      };
+
+    case 'UPDATE_DISPUTE':
+      return {
+        ...state,
+        disputes: state.disputes.map(d =>
+          d.id === action.payload.id ? { ...d, ...action.payload.updates } : d
+        ),
       };
 
     case 'ADD_CONVERSATION':
