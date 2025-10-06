@@ -275,7 +275,10 @@ export type AppAction =
   | { type: 'ADD_GOVERNMENT_SCHEME'; payload: GovernmentScheme }
   | { type: 'UPDATE_GOVERNMENT_SCHEME'; payload: { id: string; updates: Partial<GovernmentScheme> } }
   | { type: 'DELETE_GOVERNMENT_SCHEME'; payload: string }
-
+  | { type: 'ADD_COURSE'; payload: Course }
+  | { type: 'UPDATE_COURSE'; payload: { id: string; updates: Partial<Course> } }
+  | { type: 'DELETE_COURSE'; payload: string }
+  | { type: 'ADD_REVIEW'; payload: Review }
   | { type: 'ADD_TO_WISHLIST'; payload: string }
   | { type: 'REMOVE_FROM_WISHLIST'; payload: string }
   | { type: 'ADD_MESSAGE'; payload: Message }
