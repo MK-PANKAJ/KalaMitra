@@ -83,19 +83,16 @@ export class ChatbotService {
   }> {
     const lowerMsg = message.toLowerCase();
 
-    // Try OpenAI first if API key is available
+    // Try Google AI first
     try {
-      const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
-      if (apiKey && apiKey.trim()) {
-        const { openaiService } = await import('./openaiService');
-        const response = await openaiService.chatCompletion(message);
-        return {
-          content: response,
-          suggestions: SUGGESTED_TOPICS
-        };
-      }
+      const { googleAIService } = await import('./googleAIService');
+      const response = await googleAIService.generateText(`You are KalaMitra AI assistant, an expert in Indian handcrafted products and artisan marketplace. Respond helpfully to: ${message}`);
+      return {
+        content: response,
+        suggestions: SUGGESTED_TOPICS
+      };
     } catch (error) {
-      console.log('OpenAI unavailable, using fallback responses');
+      console.log('Google AI unavailable, using fallback responses');
     }
 
     // Fallback to quick responses

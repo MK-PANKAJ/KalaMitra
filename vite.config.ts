@@ -7,9 +7,6 @@ export default defineConfig({
     port: 3000,
     host: true
   },
-  define: {
-    'import.meta.env.GOOGLE_AI_API_KEY': JSON.stringify('AIzaSyBWu4WRfw5IV-CI8f-7DSz7rOBkSPKlLkI')
-  },
   plugins: [
     react(),
     VitePWA({

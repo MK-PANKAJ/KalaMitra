@@ -1,4 +1,4 @@
-import { 
+import {
   generateAIStory as mockGenerateAIStory,
   generateSEOKeywords as mockGenerateSEOKeywords,
   analyzeBulkInquiry as mockAnalyzeBulkInquiry,
@@ -6,21 +6,15 @@ import {
   moderateContent as mockModerateContent,
   enhanceProductDescription as mockEnhanceDescription
 } from './aiService';
-import { OpenAIService, getAPIKey } from './openaiService';
 import { googleAIService } from './googleAIService';
 import { AIStoryResult } from './aiService';
 import { rateLimiter } from './rateLimiter';
 
-let openaiService: OpenAIService | null = null;
+let openaiService: any | null = null; // Remove OpenAI service completely
 
 const initializeOpenAI = () => {
-  const apiKey = getAPIKey();
-  if (apiKey) {
-    openaiService = new OpenAIService({ apiKey });
-    console.log('✅ OpenAI API initialized successfully');
-  } else {
-    console.log('⚠️ No OpenAI API key found, using mock AI service');
-  }
+  // Remove OpenAI initialization
+  console.log('✅ Google AI service initialized (OpenAI removed)');
 };
 
 // Initialize on module load
@@ -34,20 +28,20 @@ export async function generateAIStory(
   try {
     // Check rate limit for story generation
     await rateLimiter.story.checkLimit('story');
-    
+
     console.log('🤖 Using Google AI API for story generation...');
-    
+
     // First, analyze the product to extract materials and estimate price
     const analysisPrompt = `Analyze handicraft product: ${voiceInput} from ${region}.
 Provide JSON response with:
 - materials (array of strings)
 - suggestedPrice (number in rupees)
 - tags (array of strings)`;
-    
+
     let materials: string[] = [];
     let suggestedPrice = 0;
     let tags: string[] = [];
-    
+
     try {
       const analysis = await googleAIService.generateText(analysisPrompt);
       const parsed = JSON.parse(analysis);
@@ -57,7 +51,7 @@ Provide JSON response with:
     } catch (analysisError) {
       console.warn('⚠️ Failed to analyze product details:', analysisError);
     }
-    
+
     // Generate the story
     const story = await googleAIService.generateProductDescription({
       name: voiceInput,
@@ -65,7 +59,7 @@ Provide JSON response with:
       materials: materials,
       region: region
     }, language);
-    
+
     return {
       story,
       suggestedPrice,
@@ -74,15 +68,7 @@ Provide JSON response with:
       tags
     };
   } catch (error) {
-    console.warn('⚠️ Google AI API failed, trying OpenAI:', error);
-    
-    if (openaiService) {
-      try {
-        return await openaiService.generateStoryAndPrice(voiceInput, region, language);
-      } catch (error) {
-        console.warn('⚠️ OpenAI API failed too, falling back to mock service:', error);
-      }
-    }
+    console.warn('⚠️ Google AI API failed, falling back to mock service:', error);
   }
 
   // Mock service as final fallback
@@ -178,30 +164,16 @@ export async function analyzeReviewSentiment(review: string): Promise<{
 // Content Moderation with Google AI
 export async function moderateContent(content: string): Promise<{
   isAppropriate: boolean;
-  flags: string[];
   confidence: number;
 }> {
   try {
     // Check rate limit for content moderation
     await rateLimiter.moderation.checkLimit('moderation');
-    
+
     return await googleAIService.moderateReview(content);
   } catch (error) {
-    console.warn('⚠️ Google AI moderation failed, trying OpenAI:', error);
-    
-    if (openaiService) {
-      try {
-        const prompt = 'Analyze this content for moderation: ' + content + ' ' +
-                   'Provide a JSON response with: ' +
-                   'isAppropriate (boolean), flags (array of strings for issues found), confidence (number from 0 to 1)';
-        const moderationResponse = await openaiService.chatCompletion(prompt);
-        const response = JSON.parse(moderationResponse);
-        return response;
-      } catch (openaiError) {
-        console.warn('⚠️ OpenAI moderation failed, falling back to mock:', openaiError);
-      }
-    }
-    
+    console.warn('⚠️ Google AI moderation failed, falling back to mock:', error);
+
     return mockModerateContent(content);
   }
 }

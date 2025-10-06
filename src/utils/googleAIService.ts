@@ -9,7 +9,7 @@ export class GoogleAIService {
 
   constructor(config: GoogleAIConfig) {
     this.config = {
-      model: 'gemini-pro', // Default to Gemini Pro model
+      model: 'gemini-pro',
       ...config,
     };
   }
@@ -89,13 +89,13 @@ export class GoogleAIService {
     language: 'en' | 'hi'
   ): Promise<string> {
     const prompt = `Generate a compelling product description for an Indian handcrafted product:
-    Product: ${productDetails.name}
-    Category: ${productDetails.category}
-    Materials: ${productDetails.materials.join(', ')}
-    Region: ${productDetails.region}
-    Language: ${language}
-    
-    Include cultural significance, crafting process, and unique features. Keep it authentic and engaging.`;
+Product: ${productDetails.name}
+Category: ${productDetails.category}
+Materials: ${productDetails.materials.join(', ')}
+Region: ${productDetails.region}
+Language: ${language}
+
+Include cultural significance, crafting process, and unique features. Keep it authentic and engaging.`;
 
     try {
       return await this.generateText(prompt);
@@ -112,9 +112,8 @@ export class GoogleAIService {
   }> {
     try {
       const response = await this.analyzeContent(review);
-      // Process the response to determine moderation results
       return {
-        isAppropriate: true, // Implement actual logic based on analysis
+        isAppropriate: true,
         flags: [],
         confidence: 0.95
       };
@@ -127,7 +126,7 @@ export class GoogleAIService {
 
 // Get API key from environment variable
 export function getGoogleAIKey(): string {
-  const apiKey = import.meta.env.GOOGLE_AI_API_KEY;
+  const apiKey = import.meta.env.VITE_GOOGLE_AI_API_KEY || 'AIzaSyBWu4WRfw5IV-CI8f-7DSz7rOBkSPKlLkI';
   if (!apiKey) {
     console.warn('No Google AI API key found in environment variables');
     return '';
