@@ -84,6 +84,7 @@ export const LoginPage: React.FC = () => {
   const demoUsers = [
     { name: 'Rajesh Kumar', email: 'rajesh@kalamitra.com', password: 'artisan123', role: 'artisan' as UserRole },
     { name: 'Anjali Mehta', email: 'anjali@kalamitra.com', password: 'buyer123', role: 'buyer' as UserRole },
+    { name: 'QC Coordinator', email: 'coordinator@kalamitra.com', password: 'coordinator123', role: 'coordinator' as UserRole },
     { name: 'Super Admin', email: 'admin@kalamitra.com', password: 'admin123', role: 'admin' as UserRole },
   ];
 
