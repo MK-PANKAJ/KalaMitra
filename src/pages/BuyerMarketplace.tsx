@@ -1,28 +1,26 @@
 import React, { useState } from 'react';
 import { Search, Filter, MapPin, Award, ShoppingBag, CreditCard, Heart, MessageCircle, Star, Flag, X, AlertTriangle, Gift } from 'lucide-react';
 import { useApp } from '../context/AppContext';
-import { ProductCard } from '../components/ProductCard';
 import { OrderCard } from '../components/OrderCard';
 import { ReviewCard } from '../components/ReviewCard';
 import { ReviewForm } from '../components/ReviewForm';
 import { StarRating } from '../components/StarRating';
 import { Product, Order, OrderMilestone, Review } from '../types';
-import { backendService } from '../services/backendService';
-import { referralService } from '../utils/referralService';
+import { couponService } from '../utils/couponService';
 
 export const BuyerMarketplace: React.FC = () => {
   const { state, dispatch } = useApp();
   const [activeTab, setActiveTab] = useState<'marketplace' | 'orders' | 'wishlist' | 'referral'>('marketplace');
-  const [showReviewForm, setShowReviewForm] = useState(false);
   const [selectedOrderForReview, setSelectedOrderForReview] = useState<Order | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterRegion, setFilterRegion] = useState('');
   const [filterCategory, setFilterCategory] = useState('');
   const [onlyQCVerified, setOnlyQCVerified] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [showPayment, setShowPayment] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<'upi' | 'card' | 'netbanking'>('upi');
   const [deliveryAddress, setDeliveryAddress] = useState('');
+  const [couponCode, setCouponCode] = useState('');
+  const [appliedCoupon, setAppliedCoupon] = useState<any>(null);
+  const [couponValidation, setCouponValidation] = useState<any>(null);
   
   // Report & Review states
   const [showReportModal, setShowReportModal] = useState(false);
@@ -376,6 +374,63 @@ export const BuyerMarketplace: React.FC = () => {
 
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Coupon Code (Optional)
+                    </label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={couponCode}
+                        onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                        placeholder="Enter coupon code"
+                        className="flex-1 px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-green-400 outline-none"
+                        disabled={appliedCoupon !== null}
+                      />
+                      {!appliedCoupon ? (
+                        <button
+                          onClick={() => {
+                            if (couponCode.trim()) {
+                              const validation = couponService.validateCoupon(
+                                couponCode,
+                                selectedProduct.price,
+                                state.user?.id,
+                                [selectedProduct.category],
+                                [selectedProduct.id]
+                              );
+                              setCouponValidation(validation);
+                              if (validation.valid && validation.coupon) {
+                                setAppliedCoupon(validation.coupon);
+                                couponService.applyCoupon(couponCode, state.user?.id);
+                                alert(`✅ ${validation.message}`);
+                              } else {
+                                alert(validation.message);
+                              }
+                            }
+                          }}
+                          className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-semibold"
+                        >
+                          Apply
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => {
+                            setAppliedCoupon(null);
+                            setCouponValidation(null);
+                            setCouponCode('');
+                            alert('Coupon removed');
+                          }}
+                          className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-semibold"
+                        >
+                          Remove
+                        </button>
+                      )}
+                    </div>
+                    {couponValidation && !couponValidation.valid && (
+                      <p className="text-red-600 text-sm mt-1">{couponValidation.message}</p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
                       Payment Method
                     </label>
                     <div className="grid grid-cols-3 gap-2">
@@ -420,13 +475,19 @@ export const BuyerMarketplace: React.FC = () => {
                       <span className="text-gray-600">Product Price:</span>
                       <span className="font-semibold">₹{selectedProduct.price.toLocaleString('en-IN')}</span>
                     </div>
+                    {appliedCoupon && (
+                      <div className="flex justify-between mb-2 text-green-600">
+                        <span>Coupon Discount ({appliedCoupon.code}):</span>
+                        <span className="font-semibold">-₹{couponValidation.discount}</span>
+                      </div>
+                    )}
                     <div className="flex justify-between mb-2">
                       <span className="text-gray-600">Platform Fee:</span>
                       <span className="font-semibold">₹0</span>
                     </div>
                     <div className="flex justify-between pt-2 border-t border-saffron-300">
                       <span className="font-bold text-lg">Total Amount:</span>
-                      <span className="font-bold text-lg text-terracotta-600">₹{selectedProduct.price.toLocaleString('en-IN')}</span>
+                      <span className="font-bold text-lg text-terracotta-600">₹{(appliedCoupon ? couponValidation.finalAmount : selectedProduct.price).toLocaleString('en-IN')}</span>
                     </div>
                   </div>
 
@@ -442,7 +503,7 @@ export const BuyerMarketplace: React.FC = () => {
                       className="flex-1 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold flex items-center justify-center gap-2"
                     >
                       <CreditCard size={20} />
-                      Pay & Place Order
+                      Pay ₹{(appliedCoupon ? couponValidation.finalAmount : selectedProduct.price).toLocaleString('en-IN')}
                     </button>
                   </div>
                 </div>

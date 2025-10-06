@@ -23,24 +23,35 @@ export class GoogleAIService {
 
   async generateText(prompt: string): Promise<string> {
     try {
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${this.config.model}:generateText`, {
+      // Use the correct Google AI (Gemini) API endpoint
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${this.config.model}:generateContent?key=${this.config.apiKey}`, {
         method: 'POST',
-        headers: this.getHeaders(),
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({
-          prompt: {
-            text: prompt
-          },
-          temperature: 0.7,
-          candidate_count: 1,
+          contents: [{
+            parts: [{
+              text: prompt
+            }]
+          }],
+          generationConfig: {
+            temperature: 0.7,
+            topK: 40,
+            topP: 0.95,
+            maxOutputTokens: 1024,
+          }
         }),
       });
 
       if (!response.ok) {
-        throw new Error(`Google AI API error: ${response.status}`);
+        const errorText = await response.text();
+        console.error('Google AI API error:', response.status, errorText);
+        throw new Error(`Google AI API error: ${response.status} - ${errorText}`);
       }
 
       const data = await response.json();
-      return data.candidates[0]?.content || 'Could not generate response';
+      return data.candidates?.[0]?.content?.parts?.[0]?.text || 'Could not generate response';
     } catch (error) {
       console.error('Google AI generation error:', error);
       throw error;
@@ -53,26 +64,27 @@ export class GoogleAIService {
     summary: string;
   }> {
     try {
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${this.config.model}:analyzeContent`, {
-        method: 'POST',
-        headers: this.getHeaders(),
-        body: JSON.stringify({
-          content: {
-            text: content
-          }
-        }),
-      });
+      const prompt = `Analyze the following content and provide a JSON response with sentiment (positive/neutral/negative), key topics (array of strings), and a brief summary (string):
 
-      if (!response.ok) {
-        throw new Error(`Google AI API error: ${response.status}`);
+Content: ${content}`;
+      
+      const response = await this.generateText(prompt);
+      
+      try {
+        const analysis = JSON.parse(response);
+        return {
+          sentiment: analysis.sentiment || 'neutral',
+          topics: analysis.topics || [],
+          summary: analysis.summary || ''
+        };
+      } catch (parseError) {
+        console.warn('Failed to parse AI analysis response:', parseError);
+        return {
+          sentiment: 'neutral',
+          topics: [],
+          summary: ''
+        };
       }
-
-      const data = await response.json();
-      return {
-        sentiment: data.sentiment || 'neutral',
-        topics: data.topics || [],
-        summary: data.summary || ''
-      };
     } catch (error) {
       console.error('Google AI analysis error:', error);
       throw error;
@@ -125,10 +137,13 @@ Include cultural significance, crafting process, and unique features. Keep it au
 }
 
 // Get API key from environment variable
+// Note: For production, set VITE_GOOGLE_AI_API_KEY in your .env file
 export function getGoogleAIKey(): string {
-  const apiKey = import.meta.env.VITE_GOOGLE_AI_API_KEY || 'AIzaSyBWu4WRfw5IV-CI8f-7DSz7rOBkSPKlLkI';
+  const apiKey = import.meta.env.VITE_GOOGLE_AI_API_KEY;
   if (!apiKey) {
-    console.warn('No Google AI API key found in environment variables');
+    console.warn('🔑 No Google AI API key found in environment variables');
+    console.warn('💡 To use Google AI features, add VITE_GOOGLE_AI_API_KEY to your .env file');
+    console.warn('📝 Example: VITE_GOOGLE_AI_API_KEY=your_api_key_here');
     return '';
   }
   return apiKey;

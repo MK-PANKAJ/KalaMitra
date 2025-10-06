@@ -6,6 +6,7 @@ export const initialState: AppState = {
   products: [],
   orders: [],
   disputes: [],
+  governmentSchemes: [],
   reviews: [],
   messages: [],
   conversations: [],
@@ -41,6 +42,7 @@ export const appReducer = (state: AppState, action: AppAction): AppState => {
         products: [],
         orders: [],
         disputes: [],
+        governmentSchemes: [],
         reviews: [],
         messages: [],
         conversations: [],
@@ -90,18 +92,24 @@ export const appReducer = (state: AppState, action: AppAction): AppState => {
         ),
       };
 
-    case 'ADD_DISPUTE':
+    case 'ADD_GOVERNMENT_SCHEME':
       return {
         ...state,
-        disputes: [...state.disputes, action.payload],
+        governmentSchemes: [...state.governmentSchemes, action.payload],
       };
 
-    case 'UPDATE_DISPUTE':
+    case 'UPDATE_GOVERNMENT_SCHEME':
       return {
         ...state,
-        disputes: state.disputes.map(d =>
-          d.id === action.payload.id ? { ...d, ...action.payload.updates } : d
+        governmentSchemes: state.governmentSchemes.map(scheme =>
+          scheme.id === action.payload.id ? { ...scheme, ...action.payload.updates } : scheme
         ),
+      };
+
+    case 'DELETE_GOVERNMENT_SCHEME':
+      return {
+        ...state,
+        governmentSchemes: state.governmentSchemes.filter(scheme => scheme.id !== action.payload),
       };
 
     case 'ADD_REVIEW':
@@ -169,6 +177,8 @@ export const appReducer = (state: AppState, action: AppAction): AppState => {
         products: demoData.products,
         orders: demoData.orders,
         disputes: demoData.disputes,
+        governmentSchemes: demoData.governmentSchemes || [],
+        reviews: demoData.reviews || [],
       };
 
     default:

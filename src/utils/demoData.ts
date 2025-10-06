@@ -1,4 +1,4 @@
-import { Product, Order, Dispute, OrderMilestone } from '../types';
+import { Product, Order, Dispute, OrderMilestone, GovernmentScheme } from '../types';
 
 export function generateDemoData() {
   const demoProducts: Product[] = [
@@ -143,9 +143,60 @@ export function generateDemoData() {
     },
   ];
 
+  const demoGovernmentSchemes = [
+    {
+      id: 'scheme-1',
+      name: 'PM Vishwakarma Scheme',
+      ministry: 'Ministry of Micro, Small and Medium Enterprises',
+      description: 'Comprehensive support for traditional artisans and craftspeople with financial assistance, skill upgradation and modern equipment.',
+      benefits: [
+        'Financial support up to ₹3 lakhs',
+        'Skill development training',
+        'Modern tools and equipment',
+        'Marketing support',
+      ],
+      eligibility: [
+        'Traditional artisan/craftsperson',
+        'Age 18-60 years',
+        'Indian citizen',
+        'Not beneficiary of similar scheme',
+      ],
+      applicationLink: 'https://pmvishwakarma.gov.in',
+      deadline: '2025-12-31',
+      category: 'finance' as const,
+      status: 'active' as const,
+      createdAt: new Date().toISOString(),
+      createdBy: 'admin-1',
+    },
+    {
+      id: 'scheme-2',
+      name: 'One District One Product (ODOP)',
+      ministry: 'Ministry of Commerce and Industry',
+      description: 'Promotes unique products from each district to boost local economy and preserve traditional crafts.',
+      benefits: [
+        'Marketing and branding support',
+        'Quality certification',
+        'E-commerce facilitation',
+        'Export promotion',
+      ],
+      eligibility: [
+        'Artisan from registered district',
+        'Product matches ODOP category',
+        'Quality standards met',
+      ],
+      applicationLink: 'https://odop.gov.in',
+      category: 'marketing' as const,
+      status: 'active' as const,
+      createdAt: new Date().toISOString(),
+      createdBy: 'admin-1',
+    },
+  ];
+
   return {
     products: demoProducts,
     orders: demoOrders,
     disputes: demoDisputes,
+    governmentSchemes: demoGovernmentSchemes,
+    reviews: [],
   };
 }

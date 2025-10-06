@@ -132,6 +132,21 @@ export interface Dispute {
   createdAt?: string;
 }
 
+export interface GovernmentScheme {
+  id: string;
+  name: string;
+  ministry: string;
+  description: string;
+  benefits: string[];
+  eligibility: string[];
+  applicationLink: string;
+  deadline?: string;
+  category: 'finance' | 'training' | 'marketing' | 'export';
+  status: 'active' | 'upcoming' | 'closed';
+  createdAt: string;
+  createdBy?: string;
+}
+
 export interface Review {
   id: string;
   productId: string;
@@ -147,36 +162,17 @@ export interface Review {
   verified: boolean;
 }
 
-export interface BulkInquiry {
+export interface Message {
   id: string;
-  buyerId: string;
-  buyerName: string;
-  buyerEmail: string;
-  buyerPhone: string;
-  
-  // Product Details
-  productType: string;
-  category: string;
-  description: string;
-  quantity: number;
-  
-  // Requirements
-  specifications?: string;
-  referenceImages?: string[];
-  deliveryDeadline?: string;
-  budgetRange?: {
-    min: number;
-    max: number;
-  };
-  
-  // Status
-  status: 'pending' | 'assigned' | 'quoted' | 'negotiating' | 'accepted' | 'rejected' | 'completed';
-  assignedTo?: string; // artisan ID
-  assignedBy?: string; // coordinator ID
-  
-  // Timestamps
+  conversationId: string;
+  senderId?: string;
+  senderName: string;
+  senderRole: UserRole;
+  receiverId: string;
+  content: string;
+  attachments?: string[];
+  read: boolean;
   createdAt: string;
-  updatedAt: string;
 }
 
 export interface Quotation {
@@ -218,20 +214,7 @@ export interface Quotation {
   }[];
   
   createdAt: string;
-  updatedAt: string;
-}
-
-export interface Message {
-  id: string;
-  conversationId: string;
-  senderId?: string;
-  senderName: string;
-  senderRole: UserRole;
-  receiverId: string;
-  content: string;
-  attachments?: string[];
-  read: boolean;
-  createdAt: string;
+  createdBy?: string;
 }
 
 export interface Conversation {
@@ -249,6 +232,7 @@ export interface AppState {
   products: Product[];
   orders: Order[];
   disputes: Dispute[];
+  governmentSchemes: GovernmentScheme[];
   reviews: Review[];
   messages: Message[];
   conversations: Conversation[];
@@ -269,7 +253,9 @@ export type AppAction =
   | { type: 'UPDATE_ORDER'; payload: { id: string; updates: Partial<Order> } }
   | { type: 'ADD_MILESTONE'; payload: { orderId: string; milestone: OrderMilestone } }
   | { type: 'ADD_DISPUTE'; payload: Dispute }
-  | { type: 'UPDATE_DISPUTE'; payload: { id: string; updates: Partial<Dispute> } }
+  | { type: 'ADD_GOVERNMENT_SCHEME'; payload: GovernmentScheme }
+  | { type: 'UPDATE_GOVERNMENT_SCHEME'; payload: { id: string; updates: Partial<GovernmentScheme> } }
+  | { type: 'DELETE_GOVERNMENT_SCHEME'; payload: string }
   | { type: 'ADD_REVIEW'; payload: Review }
   | { type: 'ADD_TO_WISHLIST'; payload: string }
   | { type: 'REMOVE_FROM_WISHLIST'; payload: string }

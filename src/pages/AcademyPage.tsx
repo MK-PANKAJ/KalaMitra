@@ -13,6 +13,7 @@ interface Course {
   enrolledCount: number;
   rating: number;
   lessons: number;
+  youtubeLink?: string;
   completed?: boolean;
 }
 
@@ -243,9 +244,26 @@ export const AcademyPage: React.FC = () => {
 
               <button className="w-full px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-semibold flex items-center justify-center gap-2">
                 <Play size={18} />
-                {course.completed ? 'Continue Learning' : 'Start Learning'}
+                {course.youtubeLink ? 'Watch on YouTube' : 'Start Learning'}
               </button>
             </div>
+
+            {course.youtubeLink && (
+              <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg">
+                <div className="flex items-center gap-2 text-red-700">
+                  <Play size={16} className="fill-red-600" />
+                  <span className="text-sm font-semibold">YouTube Video Available</span>
+                </div>
+                <a
+                  href={course.youtubeLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs text-red-600 hover:text-red-800 underline mt-1 inline-block"
+                >
+                  Watch tutorial video →
+                </a>
+              </div>
+            )}
           </div>
         ))}
       </div>

@@ -85,12 +85,15 @@ export class ChatbotService {
 
     // Try Google AI first
     try {
-      const { googleAIService } = await import('./googleAIService');
-      const response = await googleAIService.generateText(`You are KalaMitra AI assistant, an expert in Indian handcrafted products and artisan marketplace. Respond helpfully to: ${message}`);
-      return {
-        content: response,
-        suggestions: SUGGESTED_TOPICS
-      };
+      const { getGoogleAIKey } = await import('./googleAIService');
+      if (getGoogleAIKey()) {
+        const { googleAIService } = await import('./googleAIService');
+        const response = await googleAIService.generateText(`You are KalaMitra AI assistant, an expert in Indian handcrafted products and artisan marketplace. Respond helpfully to: ${message}`);
+        return {
+          content: response,
+          suggestions: SUGGESTED_TOPICS
+        };
+      }
     } catch (error) {
       console.log('Google AI unavailable, using fallback responses');
     }

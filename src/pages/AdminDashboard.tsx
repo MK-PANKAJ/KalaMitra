@@ -26,6 +26,7 @@ interface Course {
   duration: number;
   lessons: number;
   thumbnail: string;
+  youtubeLink?: string;
   status: 'active' | 'draft' | 'archived';
 }
 
@@ -50,7 +51,7 @@ export const AdminDashboard: React.FC = () => {
   const { state, dispatch } = useApp();
   const [activeTab, setActiveTab] = useState<'overview' | 'users' | 'schemes' | 'courses' | 'achievements' | 'categories' | 'moderation' | 'analytics' | 'coupons'>('overview');
   
-  // Scheme management states
+  // Scheme management states - use global state instead of local
   const [showAddScheme, setShowAddScheme] = useState(false);
   const [newScheme, setNewScheme] = useState<Partial<GovernmentScheme>>({
     name: '',
@@ -66,10 +67,10 @@ export const AdminDashboard: React.FC = () => {
   // Course management states
   const [showAddCourse, setShowAddCourse] = useState(false);
   const [courses, setCourses] = useState<Course[]>([
-    { id: '1', title: 'Introduction to Blue Pottery', description: 'Learn basic pottery', instructor: 'Master Rajesh Kumar', craftType: 'Pottery', level: 'beginner', duration: 120, lessons: 8, thumbnail: '', status: 'active' },
-    { id: '2', title: 'Advanced Textile Weaving', description: 'Master textile patterns', instructor: 'Guru Meera Devi', craftType: 'Textile', level: 'advanced', duration: 180, lessons: 12, thumbnail: '', status: 'active' },
-    { id: '3', title: 'Jewelry Design Basics', description: 'Learn jewelry making', instructor: 'Artisan Priya Shah', craftType: 'Jewelry', level: 'beginner', duration: 90, lessons: 6, thumbnail: '', status: 'draft' },
-    { id: '4', title: 'Woodcarving Techniques', description: 'Wood carving skills', instructor: 'Master Arun Verma', craftType: 'Woodwork', level: 'intermediate', duration: 150, lessons: 10, thumbnail: '', status: 'active' },
+    { id: '1', title: 'Introduction to Blue Pottery', description: 'Learn basic pottery', instructor: 'Master Rajesh Kumar', craftType: 'Pottery', level: 'beginner', duration: 120, lessons: 8, thumbnail: '', youtubeLink: 'https://youtube.com/watch?v=example1', status: 'active' },
+    { id: '2', title: 'Advanced Textile Weaving', description: 'Master textile patterns', instructor: 'Guru Meera Devi', craftType: 'Textile', level: 'advanced', duration: 180, lessons: 12, thumbnail: '', youtubeLink: 'https://youtube.com/watch?v=example2', status: 'active' },
+    { id: '3', title: 'Jewelry Design Basics', description: 'Learn jewelry making', instructor: 'Artisan Priya Shah', craftType: 'Jewelry', level: 'beginner', duration: 90, lessons: 6, thumbnail: '', youtubeLink: 'https://youtube.com/watch?v=example3', status: 'draft' },
+    { id: '4', title: 'Woodcarving Techniques', description: 'Wood carving skills', instructor: 'Master Arun Verma', craftType: 'Woodwork', level: 'intermediate', duration: 150, lessons: 10, thumbnail: '', youtubeLink: 'https://youtube.com/watch?v=example4', status: 'active' },
   ]);
 
   // Achievement management states
@@ -146,9 +147,27 @@ export const AdminDashboard: React.FC = () => {
   };
 
   const handleSaveScheme = () => {
-    // In production, this would call an API
-    console.log('Saving new scheme:', newScheme);
-    alert('Government Scheme Added Successfully!\n\nThis would be saved to the database in production.');
+    if (!newScheme.name || !newScheme.ministry || !newScheme.description) {
+      alert('Please fill in all required fields');
+      return;
+    }
+
+    const scheme: GovernmentScheme = {
+      id: `scheme-${Date.now()}`,
+      name: newScheme.name,
+      ministry: newScheme.ministry,
+      description: newScheme.description,
+      benefits: newScheme.benefits?.filter(b => b.trim()) || [],
+      eligibility: newScheme.eligibility?.filter(e => e.trim()) || [],
+      applicationLink: newScheme.applicationLink || '',
+      deadline: newScheme.deadline,
+      category: newScheme.category || 'finance',
+      status: newScheme.status || 'active',
+      createdAt: new Date().toISOString(),
+      createdBy: state.user?.id,
+    };
+
+    dispatch({ type: 'ADD_GOVERNMENT_SCHEME', payload: scheme });
     setShowAddScheme(false);
     setNewScheme({
       name: '',
@@ -160,6 +179,7 @@ export const AdminDashboard: React.FC = () => {
       category: 'finance',
       status: 'active',
     });
+    alert('✅ Government Scheme Added Successfully!\n\nThe scheme is now available to all users.');
   };
 
   // User Management Handlers
@@ -990,27 +1010,53 @@ export const AdminDashboard: React.FC = () => {
             </div>
           )}
 
-          {/* Existing Schemes */}
+          {/* Existing Schemes - Use global state */}
           <div className="bg-white rounded-lg shadow-md p-6">
-            <h3 className="text-xl font-bold text-gray-800 mb-4">Existing Schemes (Mock Data)</h3>
+            <h3 className="text-xl font-bold text-gray-800 mb-4">Existing Schemes ({state.governmentSchemes.length})</h3>
             <div className="space-y-3">
-              <div className="flex items-center justify-between p-4 border-2 border-gray-200 rounded-lg hover:border-indigo-300">
-                <div className="flex-1">
-                  <h4 className="font-bold">PM Vishwakarma Scheme</h4>
-                  <p className="text-sm text-gray-600">Ministry of MSME</p>
-                </div>
-                <div className="flex items-center gap-4">
-                  <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">ACTIVE</span>
-                  <div className="flex gap-2">
-                    <button className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg">
-                      <Edit size={18} />
-                    </button>
-                    <button className="p-2 text-red-600 hover:bg-red-50 rounded-lg">
-                      <Trash2 size={18} />
-                    </button>
+              {state.governmentSchemes.map((scheme) => (
+                <div key={scheme.id} className="flex items-center justify-between p-4 border-2 border-gray-200 rounded-lg hover:border-indigo-300">
+                  <div className="flex-1">
+                    <h4 className="font-bold">{scheme.name}</h4>
+                    <p className="text-sm text-gray-600">{scheme.ministry}</p>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                      scheme.status === 'active' ? 'bg-green-100 text-green-700' :
+                      scheme.status === 'upcoming' ? 'bg-blue-100 text-blue-700' :
+                      'bg-gray-100 text-gray-700'
+                    }`}>
+                      {scheme.status.toUpperCase()}
+                    </span>
+                    <div className="flex gap-2">
+                      <button 
+                        onClick={() => {
+                          const updates = prompt('Edit scheme name:', scheme.name);
+                          if (updates) {
+                            dispatch({ type: 'UPDATE_GOVERNMENT_SCHEME', payload: { id: scheme.id, updates: { name: updates } } });
+                          }
+                        }}
+                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"
+                      >
+                        <Edit size={18} />
+                      </button>
+                      <button 
+                        onClick={() => {
+                          if (confirm(`Delete scheme: ${scheme.name}?`)) {
+                            dispatch({ type: 'DELETE_GOVERNMENT_SCHEME', payload: scheme.id });
+                          }
+                        }}
+                        className="p-2 text-red-600 hover:bg-red-50 rounded-lg"
+                      >
+                        <Trash2 size={18} />
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
+              ))}
+              {state.governmentSchemes.length === 0 && (
+                <p className="text-gray-500 text-center py-4">No schemes added yet. Click "Add New Scheme" to get started.</p>
+              )}
             </div>
           </div>
         </div>
@@ -1064,6 +1110,7 @@ export const AdminDashboard: React.FC = () => {
                   <option value="advanced">Advanced</option>
                 </select>
                 <input type="number" placeholder="Duration (minutes)" className="px-4 py-2 border-2 border-gray-300 rounded-lg outline-none focus:border-indigo-400" />
+                <input type="url" placeholder="YouTube Link (optional)" className="px-4 py-2 border-2 border-gray-300 rounded-lg outline-none focus:border-indigo-400 md:col-span-2" />
               </div>
               <button 
                 onClick={() => {

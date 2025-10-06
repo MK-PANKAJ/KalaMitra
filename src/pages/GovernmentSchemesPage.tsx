@@ -1,147 +1,12 @@
 import React, { useState } from 'react';
 import { Building2, FileText, CheckCircle, Clock, ExternalLink, Download } from 'lucide-react';
-
-interface GovernmentScheme {
-  id: string;
-  name: string;
-  ministry: string;
-  description: string;
-  benefits: string[];
-  eligibility: string[];
-  applicationLink: string;
-  deadline?: string;
-  category: 'finance' | 'training' | 'marketing' | 'export';
-  status: 'active' | 'upcoming' | 'closed';
-}
+import { useApp } from '../context/AppContext';
 
 export const GovernmentSchemesPage: React.FC = () => {
+  const { state } = useApp();
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
-  const schemes: GovernmentScheme[] = [
-    {
-      id: 'scheme-1',
-      name: 'PM Vishwakarma Scheme',
-      ministry: 'Ministry of Micro, Small and Medium Enterprises',
-      description: 'Comprehensive support for traditional artisans and craftspeople with financial assistance, skill upgradation and modern equipment.',
-      benefits: [
-        'Financial support up to ₹3 lakhs',
-        'Skill development training',
-        'Modern tools and equipment',
-        'Marketing support',
-      ],
-      eligibility: [
-        'Traditional artisan/craftsperson',
-        'Age 18-60 years',
-        'Indian citizen',
-        'Not beneficiary of similar scheme',
-      ],
-      applicationLink: 'https://pmvishwakarma.gov.in',
-      deadline: '2025-12-31',
-      category: 'finance',
-      status: 'active',
-    },
-    {
-      id: 'scheme-2',
-      name: 'One District One Product (ODOP)',
-      ministry: 'Ministry of Commerce and Industry',
-      description: 'Promotes unique products from each district to boost local economy and preserve traditional crafts.',
-      benefits: [
-        'Marketing and branding support',
-        'Quality certification',
-        'E-commerce facilitation',
-        'Export promotion',
-      ],
-      eligibility: [
-        'Artisan from registered district',
-        'Product matches ODOP category',
-        'Quality standards met',
-      ],
-      applicationLink: 'https://odop.gov.in',
-      category: 'marketing',
-      status: 'active',
-    },
-    {
-      id: 'scheme-3',
-      name: 'Scheme of Fund for Regeneration of Traditional Industries (SFURTI)',
-      ministry: 'Ministry of MSME',
-      description: 'Organizes traditional industries into clusters for economic development and competitiveness.',
-      benefits: [
-        'Cluster development support',
-        'Common facility centers',
-        'Technology upgradation',
-        'Skill enhancement',
-      ],
-      eligibility: [
-        'Part of artisan cluster',
-        'Traditional craft practice',
-        'Minimum 500 artisans in cluster',
-      ],
-      applicationLink: 'https://sfurti.msme.gov.in',
-      category: 'training',
-      status: 'active',
-    },
-    {
-      id: 'scheme-4',
-      name: 'Export Promotion Capital Goods (EPCG) Scheme',
-      ministry: 'Directorate General of Foreign Trade',
-      description: 'Allows import of capital goods at zero customs duty for export production.',
-      benefits: [
-        'Zero customs duty on imports',
-        'Export obligation fulfillment',
-        'Technology upgradation',
-      ],
-      eligibility: [
-        'Export-oriented business',
-        'Valid IEC (Import Export Code)',
-        'Export commitment capability',
-      ],
-      applicationLink: 'https://dgft.gov.in',
-      category: 'export',
-      status: 'active',
-    },
-    {
-      id: 'scheme-5',
-      name: 'National Handicraft Development Programme',
-      ministry: 'Ministry of Textiles - Office of Development Commissioner (Handicrafts)',
-      description: 'Comprehensive support for design, technology, training, and marketing of handicrafts.',
-      benefits: [
-        'Design and product development',
-        'Marketing support',
-        'Exhibition participation',
-        'Financial assistance',
-      ],
-      eligibility: [
-        'Registered handicraft artisan',
-        'Active craft practice',
-        'Quality product standards',
-      ],
-      applicationLink: 'https://handicrafts.nic.in',
-      category: 'marketing',
-      status: 'active',
-    },
-    {
-      id: 'scheme-6',
-      name: 'Mudra Yojana',
-      ministry: 'Ministry of Finance',
-      description: 'Provides loans up to ₹10 lakhs to micro and small enterprises.',
-      benefits: [
-        'Loans up to ₹10 lakhs',
-        'Low interest rates',
-        'No collateral required',
-        'Easy application process',
-      ],
-      eligibility: [
-        'Micro/small enterprise',
-        'Indian citizen',
-        'Age 18+ years',
-        'Business plan required',
-      ],
-      applicationLink: 'https://www.mudra.org.in',
-      deadline: 'Rolling basis',
-      category: 'finance',
-      status: 'active',
-    },
-  ];
+  const schemes = state.governmentSchemes || [];
 
   const categories = [
     { value: 'all', label: 'All Schemes', icon: '📋' },
@@ -175,7 +40,7 @@ export const GovernmentSchemesPage: React.FC = () => {
           <p className="text-3xl font-bold text-orange-600">{schemes.filter(s => s.status === 'active').length}</p>
           <p className="text-xs text-gray-500">Currently accepting applications</p>
         </div>
-        
+
         <div className="bg-white rounded-lg shadow-md p-4">
           <div className="flex items-center gap-2 mb-2">
             <CheckCircle className="text-green-600" size={24} />
@@ -184,7 +49,7 @@ export const GovernmentSchemesPage: React.FC = () => {
           <p className="text-3xl font-bold text-green-600">0</p>
           <p className="text-xs text-gray-500">Submitted applications</p>
         </div>
-        
+
         <div className="bg-white rounded-lg shadow-md p-4">
           <div className="flex items-center gap-2 mb-2">
             <Clock className="text-blue-600" size={24} />
@@ -301,7 +166,7 @@ export const GovernmentSchemesPage: React.FC = () => {
         <div className="text-center py-12 bg-white rounded-lg shadow-md">
           <FileText size={64} className="mx-auto mb-4 text-gray-300" />
           <p className="text-xl text-gray-600 mb-2">No schemes found</p>
-          <p className="text-gray-500">Try selecting a different category</p>
+          <p className="text-gray-500">Try selecting a different category or ask admin to add schemes</p>
         </div>
       )}
 

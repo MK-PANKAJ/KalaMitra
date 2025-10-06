@@ -62,7 +62,7 @@ export const ArtisanDashboard: React.FC = () => {
       materials: currentProduct.materials || [],
       hasQualityBadge: false,
       createdAt: new Date().toISOString(),
-      isActive: true, // Product goes live immediately
+      isActive: false, // Product goes to QC review first
     };
 
     // Save to backend
@@ -73,7 +73,7 @@ export const ArtisanDashboard: React.FC = () => {
     setCurrentProduct({});
     setAiStory('');
     
-    alert('✅ Product Listed Successfully!\n\nYour product is now live on the marketplace.\n\n💡 Tip: Get QC approval from coordinator to earn a Quality Badge!');
+    alert('✅ Product Submitted for QC Review!\n\nYour product has been submitted to our quality control team.\n\n⏳ It will be reviewed by a coordinator before going live on the marketplace.\n\n📋 You will receive a notification once the review is complete.');
   };
 
   const handleUpdateOrderStatus = async (orderId: string, newStatus: any) => {
