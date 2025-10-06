@@ -1,9 +1,26 @@
+import { ProductCard } from '../components/ProductCard';
+import { OrderCard } from '../components/OrderCard';
+import { ReviewForm } from '../components/ReviewForm';
+import { StarRating } from '../components/StarRating';
+import { ReviewCard } from '../components/ReviewCard';
+import { Product, Order, OrderMilestone, Review } from '../types';
+import { couponService } from '../utils/couponService';
+import { backendService } from '../services/backendService';
+import { referralService } from '../utils/referralService';
 import React, { useState } from 'react';
 import { Search, Filter, MapPin, Award, ShoppingBag, CreditCard, Heart, MessageCircle, Star, Flag, X, AlertTriangle, Gift } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 
 export const BuyerMarketplace: React.FC = () => {
   const { state, dispatch } = useApp();
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [showPayment, setShowPayment] = useState(false);
+  const [showReviewForm, setShowReviewForm] = useState(false);
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [showProductReviewForm, setShowProductReviewForm] = useState(false);
+  const [reportCategory, setReportCategory] = useState<'misleading' | 'inappropriate' | 'quality' | 'fake' | 'other'>('misleading');
+  const [reportDetails, setReportDetails] = useState('');
+  const [reportReason, setReportReason] = useState('');
   const [activeTab, setActiveTab] = useState<'marketplace' | 'orders' | 'wishlist' | 'referral'>('marketplace');
   const [selectedOrderForReview, setSelectedOrderForReview] = useState<Order | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
