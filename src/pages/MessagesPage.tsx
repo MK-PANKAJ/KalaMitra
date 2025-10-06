@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MessageCircle, Search, ArrowLeft } from 'lucide-react';
+import { MessageCircle, Search, ArrowLeft, Plus, Users } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { ChatBox } from '../components/ChatBox';
 import { Conversation, Message } from '../types';
@@ -8,6 +8,8 @@ export const MessagesPage: React.FC = () => {
   const { state, dispatch } = useApp();
   const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [showUserSearch, setShowUserSearch] = useState(false);
+  const [userSearchQuery, setUserSearchQuery] = useState('');
 
   const userConversations = state.conversations.filter(conv =>
     conv.participants.includes(state.user!.id)
@@ -21,6 +23,74 @@ export const MessagesPage: React.FC = () => {
     if (!searchQuery) return true;
     return otherUser?.artisanName.toLowerCase().includes(searchQuery.toLowerCase());
   });
+
+  // Get all platform users (artisans, coordinators, admins) for messaging
+  const getAllPlatformUsers = (): Array<{id: string, name: string, email: string, role: 'artisan' | 'coordinator' | 'admin'}> => {
+    const platformUsers: Array<{id: string, name: string, email: string, role: 'artisan' | 'coordinator' | 'admin'}> = [];
+    
+    // Add artisans from products
+    state.products.forEach(product => {
+      if (!platformUsers.find(u => u.id === product.artisanId)) {
+        platformUsers.push({
+          id: product.artisanId,
+          name: product.artisanName,
+          email: `${product.artisanName.toLowerCase().replace(' ', '.')}@kalamitra.com`,
+          role: 'artisan' as const,
+        });
+      }
+    });
+    
+    // In a real app, you'd fetch all users from backend
+    // For now, we'll use demo data pattern
+    if (platformUsers.length === 0) {
+      platformUsers.push(
+        { id: 'artisan-1', name: 'Rajesh Kumar', email: 'rajesh@kalamitra.com', role: 'artisan' },
+        { id: 'coordinator-1', name: 'QC Coordinator', email: 'coordinator@kalamitra.com', role: 'coordinator' },
+        { id: 'admin-1', name: 'Super Admin', email: 'admin@kalamitra.com', role: 'admin' }
+      );
+    }
+    
+    return platformUsers;
+  };
+
+  const platformUsers: Array<{id: string, name: string, email: string, role: 'artisan' | 'coordinator' | 'admin'}> = getAllPlatformUsers();
+
+  const filteredUsers = platformUsers.filter(user => {
+    if (!userSearchQuery) return true;
+    return (
+      user.name.toLowerCase().includes(userSearchQuery.toLowerCase()) ||
+      user.email.toLowerCase().includes(userSearchQuery.toLowerCase())
+    );
+  }).filter(user => user.id !== state.user!.id); // Exclude current user
+
+  const startNewConversation = (user: typeof platformUsers[0]) => {
+    // Check if conversation already exists
+    const existingConversation = state.conversations.find(conv =>
+      conv.participants.includes(state.user!.id) &&
+      conv.participants.includes(user.id)
+    );
+    
+    if (existingConversation) {
+      setSelectedConversation(existingConversation);
+      setShowUserSearch(false);
+      return;
+    }
+    
+    // Create new conversation
+    const conversationId = `conv-${Date.now()}`;
+    const newConversation: Conversation = {
+      id: conversationId,
+      participants: [state.user!.id, user.id],
+      productId: undefined,
+      lastMessage: undefined,
+      unreadCount: 0,
+      updatedAt: new Date().toISOString(),
+    };
+    
+    dispatch({ type: 'ADD_CONVERSATION', payload: newConversation });
+    setSelectedConversation(newConversation);
+    setShowUserSearch(false);
+  };
 
   const handleSendMessage = (conversationId: string, content: string, attachments?: string[]) => {
     const conversation = state.conversations.find(c => c.id === conversationId);
@@ -134,7 +204,7 @@ export const MessagesPage: React.FC = () => {
         <p className="text-blue-50">Connect with artisans and buyers</p>
       </div>
 
-      {/* Search */}
+      {/* Search and Actions */}
       <div className="bg-white rounded-lg shadow-md p-4">
         <div className="relative">
           <Search className="absolute left-3 top-3 text-gray-400" size={20} />
