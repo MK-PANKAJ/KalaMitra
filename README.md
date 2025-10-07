@@ -35,9 +35,14 @@
 
 ### Installation
 
-1. **Navigate to the project directory:**
+1. **Execute the clone command to download the repository:**
    ```bash
-   cd C:\Users\Welcome\CascadeProjects\kalamitra
+   git clone https://github.com/MK-PANKAJ/KalaMitra.git
+   ```
+   
+2. **navigate into the project folder::**
+   ```bash
+   cd KalaMitra
    ```
 
 2. **Install dependencies:**
