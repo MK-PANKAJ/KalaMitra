@@ -40,7 +40,7 @@
    git clone https://github.com/MK-PANKAJ/KalaMitra.git
    ```
    
-2. **navigate into the project folder::**
+2. **navigate into the project folder:**
    ```bash
    cd KalaMitra
    ```
